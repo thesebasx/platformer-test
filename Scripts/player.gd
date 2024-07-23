@@ -5,6 +5,7 @@ extends CharacterBody2D
 @onready var dashTimer = $DashTimer
 @onready var dashingTime = $dashingTime
 @onready var wallJumpTimer = $WallJumpTimer
+@onready var animator = $AnimatedSprite2D
 
 const SPEED = 130.0
 const JUMP_VELOCITY = -256.0
@@ -21,16 +22,20 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 #Jump variables
 var jumpbuffered:bool = false
 var coyoteJump:bool = false
-var jumpCount:int = 2
-var max_jumps:int = 2
+var jumpCount:int = 1
+var max_jumps:int = 1
 
 #wall variables
 var isWallSliding:bool = false
 var isWallJumping:bool = false
 
+#other variables
+var facingRight:bool = true
+
 func _physics_process(delta):
 	# Add the gravity.
-	if (Input.is_action_pressed("Right") or Input.is_action_pressed("Left")) and is_on_wall_only() and velocity.y >= 0:
+	#(Input.is_action_pressed("Right") or Input.is_action_pressed("Left")) and 
+	if  is_on_wall_only() and velocity.y >= 0:
 		velocity.y = SLIDE_SPEED
 		isWallSliding = true
 	else:
@@ -54,7 +59,13 @@ func _physics_process(delta):
 	
 	# Get the input direction and handle the movement/deceleration.
 	var direction = Input.get_axis("Left", "Right")
-	if direction and !isWallSliding and !isWallJumping:
+	if direction > 0 and !facingRight:
+		facingRight = true
+	
+	if direction < 0 and facingRight:
+		facingRight = false
+	
+	if direction and !isWallJumping:
 		if is_dashing:
 			velocity.x = direction * DASH_SPEED
 		else:
@@ -71,9 +82,11 @@ func _physics_process(delta):
 	var was_on_wall_only = is_on_wall_only()
 	move_and_slide()
 	
+	ControlAnimations(direction)
+	
 	#Get double jump and dash back
-	if is_on_floor():
-		jumpCount = 2
+	if is_on_floor() and !was_on_floor:
+		jumpCount = max_jumps
 		
 		if dashTimer.time_left <= 0:
 			can_dash = true
@@ -91,6 +104,23 @@ func _physics_process(delta):
 	if was_on_wall_only and !is_on_wall_only():
 		pass
 
+func ControlAnimations(direction):
+	if !facingRight:
+		animator.flip_h = true
+	else:
+		animator.flip_h = false
+	
+	if velocity.y == 0:
+		if direction != 0:
+			animator.play("Run")
+		else:
+			animator.play("Idle")
+	
+	if velocity.y > 0:
+		animator.play("JumpUp")
+	
+	if velocity.y < 0:
+		animator.play("JumpDown")
 
 func Jump():
 	if !can_dash:
@@ -106,16 +136,20 @@ func Jump():
 	
 	if !is_on_floor() and jumpCount > 0:
 		velocity.y = JUMP_VELOCITY
-		if is_on_wall_only():
-			if Input.is_action_pressed("Right"):
-				velocity.x = -SPEED
-			
-			if Input.is_action_pressed("Left"):
-				velocity.x = SPEED
-			
-			isWallJumping = true
-			wallJumpTimer.start()
 		jumpCount -= 1
+	
+	if is_on_wall_only():
+		if facingRight:
+			velocity = Vector2(-SPEED, JUMP_VELOCITY)
+			facingRight = !facingRight
+		
+		else:
+			velocity = Vector2(SPEED, JUMP_VELOCITY)
+			facingRight = !facingRight
+		
+		
+		isWallJumping = true
+		wallJumpTimer.start()
 
 func Dash():
 	is_dashing = true
