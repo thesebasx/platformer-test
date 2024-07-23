@@ -1,0 +1,83 @@
+[gd_scene load_steps=9 format=3 uid="uid://dyviq7j8c2cbh"]
+
+[ext_resource type="Script" path="res://Assets/sprites/player.gd" id="1_0r5lw"]
+[ext_resource type="Texture2D" uid="uid://cy4fvdpfuwlcm" path="res://Assets/sprites/knight.png" id="1_tilp0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dsmnn"]
+atlas = ExtResource("1_tilp0")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_di78l"]
+atlas = ExtResource("1_tilp0")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e3p4h"]
+atlas = ExtResource("1_tilp0")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hu6i4"]
+atlas = ExtResource("1_tilp0")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_eifjl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dsmnn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_di78l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e3p4h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hu6i4")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_28x3j"]
+radius = 5.0
+
+[node name="Player" type="CharacterBody2D"]
+z_index = 5
+collision_layer = 2
+script = ExtResource("1_0r5lw")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_eifjl")
+animation = &"Idle"
+autoplay = "Idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 7)
+shape = SubResource("CircleShape2D_28x3j")
+
+[node name="JumpBuffer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[node name="CoyoteTimer" type="Timer" parent="."]
+wait_time = 0.05
+one_shot = true
+
+[node name="dashingTime" type="Timer" parent="."]
+wait_time = 0.15
+one_shot = true
+
+[node name="DashTimer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[node name="WallJumpTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[connection signal="timeout" from="JumpBuffer" to="." method="_on_jump_buffer_timeout"]
+[connection signal="timeout" from="CoyoteTimer" to="." method="_on_coyote_timer_timeout"]
+[connection signal="timeout" from="dashingTime" to="." method="_on_dashing_time_timeout"]
+[connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
+[connection signal="timeout" from="WallJumpTimer" to="." method="_on_wall_jump_timer_timeout"]
