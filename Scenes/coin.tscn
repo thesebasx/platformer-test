@@ -1,6 +1,6 @@
 [gd_scene load_steps=17 format=3 uid="uid://bh60531xwr2q1"]
 
-[ext_resource type="Script" path="res://Assets/sprites/coin.gd" id="1_b344g"]
+[ext_resource type="Script" path="res://Scripts/coin.gd" id="1_b344g"]
 [ext_resource type="Texture2D" uid="uid://c6yh5sp1aq412" path="res://Assets/sprites/coin.png" id="1_grfm6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y7wx7"]
