@@ -23,7 +23,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 var jumpbuffered:bool = false
 var coyoteJump:bool = false
 var jumpCount:int = 1
-var max_jumps:int = 1
+var max_jumps:int = 2
 
 #wall variables
 var isWallSliding:bool = false
@@ -35,7 +35,7 @@ var facingRight:bool = true
 func _physics_process(delta):
 	# Add the gravity.
 	#(Input.is_action_pressed("Right") or Input.is_action_pressed("Left")) and 
-	if  is_on_wall_only() and velocity.y >= 0:
+	if (Input.is_action_pressed("Right") or Input.is_action_pressed("Left")) and  is_on_wall_only() and velocity.y >= 0:
 		velocity.y = SLIDE_SPEED
 		isWallSliding = true
 	else:
@@ -105,10 +105,7 @@ func _physics_process(delta):
 		pass
 
 func ControlAnimations(direction):
-	if !facingRight:
-		animator.flip_h = true
-	else:
-		animator.flip_h = false
+	animator.flip_h = !facingRight
 	
 	if velocity.y == 0:
 		if direction != 0:
@@ -169,7 +166,6 @@ func _on_dash_timer_timeout():
 
 func _on_dashing_time_timeout():
 	is_dashing = false
-
 
 func _on_wall_jump_timer_timeout():
 	isWallJumping = false
