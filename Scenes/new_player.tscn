@@ -1,12 +1,24 @@
-[gd_scene load_steps=40 format=3 uid="uid://qocd6uokkqob"]
+[gd_scene load_steps=46 format=3 uid="uid://qocd6uokkqob"]
 
 [ext_resource type="Script" path="res://Scripts/CharacterMovement.gd" id="1_nv20d"]
 [ext_resource type="Script" path="res://Scripts/Jump.gd" id="1_ypxul"]
 [ext_resource type="Texture2D" uid="uid://cy4fvdpfuwlcm" path="res://Assets/sprites/knight.png" id="2_3qbi3"]
+[ext_resource type="Script" path="res://Scripts/AbilityController.gd" id="2_52cjw"]
 [ext_resource type="Script" path="res://Scripts/DoubleJump.gd" id="3_8skrv"]
 [ext_resource type="Script" path="res://Scripts/Dash.gd" id="4_bvusg"]
 [ext_resource type="Script" path="res://Scenes/AnimationControl.gd" id="4_ifj5v"]
-[ext_resource type="Script" path="res://Scripts/WallMovement.gd" id="5_ay5ta"]
+[ext_resource type="Script" path="res://Scripts/Roll.gd" id="5_w733g"]
+[ext_resource type="Script" path="res://Scripts/WallJump.gd" id="7_166j6"]
+[ext_resource type="Script" path="res://Scripts/WallSlide.gd" id="8_bxq1m"]
+[ext_resource type="Script" path="res://Scripts/WallClimb.gd" id="9_07j4e"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v63v5"]
+atlas = ExtResource("2_3qbi3")
+region = Rect2(128, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mdxcc"]
+atlas = ExtResource("2_3qbi3")
+region = Rect2(32, 160, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dsmnn"]
 atlas = ExtResource("2_3qbi3")
@@ -132,6 +144,22 @@ region = Rect2(224, 96, 32, 32)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_v63v5")
+}],
+"loop": true,
+"name": &"Dash",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mdxcc")
+}],
+"loop": true,
+"name": &"HoldWall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_dsmnn")
 }, {
 "duration": 1.0,
@@ -190,7 +218,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"Roll",
-"speed": 10.0
+"speed": 25.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -254,24 +282,40 @@ z_index = 5
 collision_layer = 2
 slide_on_ceiling = false
 script = ExtResource("1_nv20d")
+ROLL_SPEED = 260.0
+DASH_SPEED = 300.0
+
+[node name="AbilityController" type="Node" parent="."]
+script = ExtResource("2_52cjw")
 
 [node name="Jump" type="Node" parent="."]
 script = ExtResource("1_ypxul")
 
 [node name="DoubleJump" type="Node" parent="."]
+process_mode = 4
 script = ExtResource("3_8skrv")
 
 [node name="Dash" type="Node" parent="."]
+process_mode = 4
 script = ExtResource("4_bvusg")
 
 [node name="Roll" type="Node" parent="."]
+process_mode = 4
+script = ExtResource("5_w733g")
+
+[node name="WallJump" type="Node" parent="."]
+script = ExtResource("7_166j6")
 
 [node name="WallSlide" type="Node" parent="."]
-script = ExtResource("5_ay5ta")
+script = ExtResource("8_bxq1m")
+
+[node name="WallClimb" type="Node" parent="."]
+process_mode = 4
+script = ExtResource("9_07j4e")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_eifjl")
-animation = &"JumpDown"
+animation = &"HoldWall"
 autoplay = "Idle"
 script = ExtResource("4_ifj5v")
 
@@ -295,6 +339,14 @@ one_shot = true
 wait_time = 0.2
 one_shot = true
 
-[node name="WallJumpTimer" type="Timer" parent="."]
+[node name="RollTimer" type="Timer" parent="."]
+wait_time = 0.28
+one_shot = true
+
+[node name="RollBuffer" type="Timer" parent="."]
 wait_time = 0.1
+one_shot = true
+
+[node name="RollCoolDown" type="Timer" parent="."]
+wait_time = 0.33
 one_shot = true

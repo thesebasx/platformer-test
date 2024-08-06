@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://c6ynn35fgk8by"]
+
+[ext_resource type="Script" path="res://Scripts/Goal.gd" id="1_r5ryu"]
+[ext_resource type="Texture2D" uid="uid://bovg8nowyrujj" path="res://Assets/sprites/fruit.png" id="2_gfj86"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_i0sgp"]
+radius = 5.0
+
+[node name="Goal" type="Area2D"]
+collision_mask = 2
+script = ExtResource("1_r5ryu")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_gfj86")
+region_enabled = true
+region_rect = Rect2(2, 2, 11, 13)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
+shape = SubResource("CircleShape2D_i0sgp")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

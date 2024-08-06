@@ -6,7 +6,6 @@ extends Node
 
 var jumpbuffered:bool = false
 var coyoteJump:bool = false
-var isJumping:bool = false
 
 func _ready():
 	jumpBufferTimer.timeout.connect(_on_jump_buffer_timeout)
